@@ -5,111 +5,119 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Compound Interest Calculator</title>
 <style>
+  :root {
+    --bg: #f5f5f0;
+    --bg2: #eeeee8;
+    --bg3: #fff;
+    --text: #1a1a1a;
+    --text2: #555;
+    --text3: #888;
+    --border: #ddd;
+    --blue: #378ADD;
+    --green: #1D9E75;
+    --warn-bg: #fff8e6;
+    --warn-border: #f5c842;
+    --warn-text: #5a3a00;
+    --step-bg: #fff;
+    --card-bg: #eeeee8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a1a;
+      --bg2: #252525;
+      --bg3: #2e2e2e;
+      --text: #f0f0f0;
+      --text2: #aaa;
+      --text3: #777;
+      --border: #444;
+      --blue: #5ba3f5;
+      --green: #3dbf8f;
+      --warn-bg: #3a2e00;
+      --warn-border: #a07c00;
+      --warn-text: #f0d080;
+      --step-bg: #2e2e2e;
+      --card-bg: #252525;
+    }
+  }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; padding: 1rem 1rem 3rem; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 1rem 1rem 3rem; transition: background 0.2s, color 0.2s; }
 
-  h1 { font-size: 20px; font-weight: 600; margin-bottom: 1.25rem; color: #1a1a1a; }
+  h1 { font-size: 20px; font-weight: 600; margin-bottom: 1.25rem; color: var(--text); }
 
-  /* Tabs */
-  .tabs { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 1.5rem; }
-  .tab-btn { flex: 1; padding: 10px 8px; background: none; border: none; border-bottom: 2px solid transparent; font-size: 14px; font-weight: 500; color: #888; cursor: pointer; margin-bottom: -1px; transition: all 0.2s; }
-  .tab-btn.active { color: #1a1a1a; border-bottom-color: #378ADD; }
+  .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .tab-btn { flex: 1; padding: 10px 8px; background: none; border: none; border-bottom: 2px solid transparent; font-size: 14px; font-weight: 500; color: var(--text3); cursor: pointer; margin-bottom: -1px; transition: all 0.2s; }
+  .tab-btn.active { color: var(--text); border-bottom-color: var(--blue); }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
-  /* Getting Started */
-  .step { background: #fff; border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1rem; border-left: 4px solid #378ADD; }
-  .step-num { font-size: 11px; font-weight: 600; color: #378ADD; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-  .step-title { font-size: 15px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
-  .step-body { font-size: 14px; color: #444; line-height: 1.6; }
-  .step-body a { color: #378ADD; }
+  /* Dark mode toggle */
+  .header-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; }
+  .dark-toggle { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; font-size: 12px; color: var(--text2); cursor: pointer; }
 
-  .warning-box { background: #fff8e6; border: 1px solid #f5c842; border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1rem; }
-  .warning-box .step-num { color: #c97f00; }
-  .warning-box .step-title { color: #7a4f00; }
-  .warning-box .step-body { color: #5a3a00; }
+  /* Learn tab */
+  .learn-card { background: var(--step-bg); border-radius: 10px; padding: 1rem 1.1rem; margin-bottom: 1rem; border-left: 4px solid var(--blue); }
+  .learn-card.green { border-left-color: var(--green); }
+  .learn-card.gold { border-left-color: #f5c842; }
+  .learn-title { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .learn-body { font-size: 14px; color: var(--text2); line-height: 1.65; }
+  .learn-body strong { color: var(--text); font-weight: 600; }
+  .example-box { background: var(--bg2); border-radius: 6px; padding: 8px 10px; margin-top: 8px; font-size: 13px; color: var(--text2); line-height: 1.6; }
 
   /* Calculator */
   .ci-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1.25rem; }
-  .ci-label { font-size: 13px; color: #666; display: flex; justify-content: space-between; align-items: center; }
+  .ci-label { font-size: 13px; color: var(--text2); display: flex; justify-content: space-between; align-items: center; }
   .ci-label-left { display: flex; align-items: center; gap: 6px; }
-  .ci-val { font-weight: 600; color: #1a1a1a; font-size: 14px; }
-  .info-btn { width: 18px; height: 18px; border-radius: 50%; border: 1px solid #ccc; background: #f0f0ec; color: #666; font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; }
-  .info-bubble { display: none; background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 12px; color: #555; line-height: 1.6; margin-top: 6px; }
+  .slider-input-row { display: flex; align-items: center; gap: 10px; }
+  .slider-input-row input[type=range] { flex: 1; accent-color: var(--blue); cursor: pointer; }
+  .num-input { width: 72px; padding: 4px 6px; border: 1px solid var(--border); border-radius: 6px; background: var(--bg3); color: var(--text); font-size: 13px; text-align: right; }
+  .num-input:focus { outline: none; border-color: var(--blue); }
+
+  .info-btn { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); font-size: 11px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0; }
+  .info-bubble { display: none; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 12px; color: var(--text2); line-height: 1.6; margin-top: 6px; }
   .info-bubble.open { display: block; }
-  .etf-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #f0f0ec; font-size: 12px; }
+  .etf-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid var(--bg2); font-size: 12px; }
   .etf-row:last-child { border-bottom: none; }
-  .etf-name { font-weight: 600; color: #1a1a1a; }
-  input[type=range] { width: 100%; accent-color: #378ADD; cursor: pointer; }
+  .etf-name { font-weight: 600; color: var(--text); }
 
   .ci-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 1.25rem 0; }
-  .ci-card { background: #eeeee8; border-radius: 8px; padding: .85rem 1rem; }
-  .ci-card-label { font-size: 11px; color: #666; margin-bottom: 4px; }
-  .ci-card-value { font-size: 20px; font-weight: 600; color: #1a1a1a; }
-  .ci-card-value.green { color: #1D9E75; }
-  .ci-card-sub { font-size: 11px; color: #999; margin-top: 2px; }
+  .ci-card { background: var(--card-bg); border-radius: 8px; padding: .85rem 1rem; }
+  .ci-card-label { font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+  .ci-card-value { font-size: 20px; font-weight: 600; color: var(--text); }
+  .ci-card-value.green { color: var(--green); }
+  .ci-card-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
 
-  .ci-section-title { font-size: 13px; color: #666; margin: 0 0 8px; }
+  .ci-section-title { font-size: 13px; color: var(--text2); margin: 0 0 8px; font-weight: 600; }
   .ci-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
-  .ci-bar-label { width: 34px; color: #666; text-align: right; flex-shrink: 0; }
-  .ci-bar-track { flex: 1; background: #eeeee8; border-radius: 3px; height: 18px; overflow: hidden; display: flex; }
-  .ci-bar-contrib { background: #378ADD; height: 100%; }
-  .ci-bar-interest { background: #1D9E75; height: 100%; }
-  .ci-bar-total { width: 78px; text-align: right; color: #1a1a1a; flex-shrink: 0; font-weight: 600; font-size: 12px; }
+  .ci-bar-label { width: 34px; color: var(--text2); text-align: right; flex-shrink: 0; }
+  .ci-bar-track { flex: 1; background: var(--bg2); border-radius: 3px; height: 18px; overflow: hidden; display: flex; }
+  .ci-bar-contrib { background: var(--blue); height: 100%; }
+  .ci-bar-interest { background: var(--green); height: 100%; }
+  .ci-bar-total { width: 78px; text-align: right; color: var(--text); flex-shrink: 0; font-weight: 600; font-size: 12px; }
   .ci-legend { display: flex; gap: 16px; margin-bottom: 10px; }
-  .ci-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #666; }
+  .ci-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); }
   .ci-dot { width: 10px; height: 10px; border-radius: 2px; }
-  .fv-note { font-size: 11px; color: #999; margin-top: 12px; line-height: 1.5; }
+
+  .compare-box { background: var(--step-bg); border-radius: 10px; padding: 1rem 1.1rem; margin-top: 1.25rem; border-left: 4px solid var(--green); }
+  .compare-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 10px; }
+  .compare-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--bg2); font-size: 13px; }
+  .compare-row:last-child { border-bottom: none; }
+  .compare-label { color: var(--text2); }
+  .compare-value { font-weight: 600; color: var(--green); }
+
+  .fv-note { font-size: 11px; color: var(--text3); margin-top: 12px; line-height: 1.5; }
 </style>
 </head>
 <body>
 
-<h1>💰 Compound Interest</h1>
-
-<div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('calc')">Calculator</button>
-  <button class="tab-btn" onclick="switchTab('started')">Getting Started</button>
+<div class="header-row">
+  <h1>💰 Compound Interest</h1>
+  <button class="dark-toggle" onclick="toggleDark()">🌙 Dark</button>
 </div>
 
-<!-- GETTING STARTED TAB -->
-<div id="started" class="tab-content">
-
-  <div class="step">
-    <div class="step-num">Step 1</div>
-    <div class="step-title">Open a Roth IRA with Vanguard</div>
-    <div class="step-body">Vanguard is investor-owned — not for profit — which means lower fees and your interests come first. A Roth IRA lets your money grow completely tax-free. Visit <a href="https://investor.vanguard.com" target="_blank">investor.vanguard.com</a> to open an account. Fidelity and Charles Schwab are also good options if you already have an account there.</div>
-  </div>
-
-  <div class="warning-box">
-    <div class="step-num">⚠ Important</div>
-    <div class="step-title">This is a retirement account — not a savings account</div>
-    <div class="step-body">Money in a Roth IRA is meant to stay there until retirement. You cannot withdraw your earnings before age 59½ without paying taxes plus a 10% penalty. Only open one if you are committed to leaving the money alone for the long term.</div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">Step 2</div>
-    <div class="step-title">Choose a low-cost ETF</div>
-    <div class="step-body">Buy either <strong>VTI</strong> (Vanguard Total US Stock Market) or <strong>VOO</strong> (Vanguard S&amp;P 500). Both have an expense ratio of just 0.03% — that means you pay only $3 per year on every $10,000 invested. That tiny fee matters enormously over decades.</div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">Step 3</div>
-    <div class="step-title">Set up automatic weekly deposits</div>
-    <div class="step-body">Link your checking account and set up an automatic weekly transfer. Even $25 or $50 a week adds up to a surprising amount over time — use the Calculator tab to see for yourself.</div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">Step 4</div>
-    <div class="step-title">Nobody is actively trading this — and that's the point</div>
-    <div class="step-body">VTI and VOO are index funds. They simply track the market — no one is picking stocks or making trades on your behalf. That simplicity is actually the advantage. Studies show that passive index funds outperform most actively managed funds over the long run.</div>
-  </div>
-
-  <div class="step">
-    <div class="step-num">Step 5</div>
-    <div class="step-title">Don't panic when markets dip</div>
-    <div class="step-body">Markets go up and down. When they dip, do not sell. Keep making your weekly deposits and let compound interest do the heavy lifting. Time in the market beats timing the market every time.</div>
-  </div>
-
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('calc', this)">Calculator</button>
+  <button class="tab-btn" onclick="switchTab('learn', this)">Learn</button>
 </div>
 
 <!-- CALCULATOR TAB -->
@@ -118,18 +126,19 @@
   <div class="ci-row">
     <div class="ci-label">
       <div class="ci-label-left">Weekly savings</div>
-      <span class="ci-val" id="savings-out">$50</span>
     </div>
-    <input type="range" min="5" max="500" step="5" value="50" id="savings-slider">
+    <div class="slider-input-row">
+      <input type="range" min="5" max="500" step="5" value="50" id="savings-slider" oninput="syncInput('savings-slider','savings-input'); update()">
+      <input type="text" class="num-input" id="savings-input" value="$50" onchange="syncSlider('savings-input','savings-slider',5,500); update()">
+    </div>
   </div>
 
   <div class="ci-row">
     <div class="ci-label">
       <div class="ci-label-left">Annual return rate <button class="info-btn" onclick="toggleInfo('info-rate')">?</button></div>
-      <span class="ci-val" id="rate-out">7%</span>
     </div>
     <div class="info-bubble" id="info-rate">
-      Historical average annual returns (before inflation):
+      Historical average annual returns:
       <div style="margin-top:6px">
         <div class="etf-row"><span class="etf-name">S&amp;P 500 since 1926</span><span>~10% avg</span></div>
         <div class="etf-row"><span class="etf-name">VOO (Vanguard S&amp;P 500)</span><span>~10% since 2010</span></div>
@@ -138,34 +147,41 @@
       </div>
       <div style="margin-top:6px">7% is the conservative estimate most financial planners use. Past returns don't guarantee future results.</div>
     </div>
-    <input type="range" min="1" max="15" step="0.5" value="7" id="rate-slider">
+    <div class="slider-input-row">
+      <input type="range" min="1" max="15" step="0.5" value="7" id="rate-slider" oninput="syncInput('rate-slider','rate-input'); update()">
+      <input type="text" class="num-input" id="rate-input" value="7%" onchange="syncSlider('rate-input','rate-slider',1,15); update()">
+    </div>
   </div>
 
   <div class="ci-row">
     <div class="ci-label">
       <div class="ci-label-left">Inflation rate <button class="info-btn" onclick="toggleInfo('info-inflation')">?</button></div>
-      <span class="ci-val" id="inflation-out">3%</span>
     </div>
     <div class="info-bubble" id="info-inflation">
-      The US long-run average is roughly 3%. "Real value" below shows what your money will actually be worth in today's dollars — what you could really buy with it.
+      The US long-run average is roughly 3%. "Real value" below shows what your money will actually be worth in today's dollars.
     </div>
-    <input type="range" min="0" max="6" step="0.5" value="3" id="inflation-slider">
+    <div class="slider-input-row">
+      <input type="range" min="0" max="6" step="0.5" value="3" id="inflation-slider" oninput="syncInput('inflation-slider','inflation-input'); update()">
+      <input type="text" class="num-input" id="inflation-input" value="3%" onchange="syncSlider('inflation-input','inflation-slider',0,6); update()">
+    </div>
   </div>
 
   <div class="ci-row">
     <div class="ci-label">
       <div class="ci-label-left">Starting age <button class="info-btn" onclick="toggleInfo('info-age')">?</button></div>
-      <span class="ci-val" id="age-out">30</span>
     </div>
     <div class="info-bubble" id="info-age">
-      Starting just 10 years earlier can more than double your final balance. Time is the single biggest factor in compound interest — even more than rate or how much you save per week.
+      Starting just 10 years earlier can more than double your final balance. Time is the single biggest factor in compound interest.
     </div>
-    <input type="range" min="18" max="64" step="1" value="30" id="age-slider">
+    <div class="slider-input-row">
+      <input type="range" min="18" max="69" step="1" value="30" id="age-slider" oninput="syncInput('age-slider','age-input'); update()">
+      <input type="text" class="num-input" id="age-input" value="30" onchange="syncSlider('age-input','age-slider',18,69); update()">
+    </div>
   </div>
 
   <div class="ci-cards">
     <div class="ci-card">
-      <div class="ci-card-label">Total at age 65</div>
+      <div class="ci-card-label">Total at age 70</div>
       <div class="ci-card-value green" id="total-val">—</div>
       <div class="ci-card-sub">nominal (future) dollars</div>
     </div>
@@ -186,103 +202,254 @@
     </div>
   </div>
 
-  <p class="ci-section-title">Growth by decade</p>
-  <div class="ci-legend">
-    <div class="ci-legend-item"><div class="ci-dot" style="background:#378ADD"></div>Contributions</div>
-    <div class="ci-legend-item"><div class="ci-dot" style="background:#1D9E75"></div>Growth</div>
+  <div class="fv-note">Compounding is monthly. "Total at age 70" is the future nominal dollar amount. "Real value" discounts by your chosen inflation rate to show purchasing power in today's dollars.</div>
+
+</div>
+
+<!-- LEARN TAB -->
+<div id="learn" class="tab-content">
+
+  <div class="learn-card">
+    <div class="learn-title">What is compound interest?</div>
+    <div class="learn-body">
+      Compound interest means you earn interest not just on your original money, but also on the interest you've already earned. Over time this creates a snowball effect — your money grows faster and faster the longer it sits.
+      <div class="example-box">
+        Example: $1,000 at 7% earns $70 in year one. In year two you earn 7% on $1,070 — that's $74.90. Each year the interest amount grows, even without adding new money.
+      </div>
+    </div>
   </div>
-  <div id="bars"></div>
-  <div class="fv-note">Compounding is monthly. "Total at age 65" is the future nominal dollar amount. "Real value" discounts by your chosen inflation rate to show purchasing power in today's dollars.</div>
+
+  <div class="learn-card green">
+    <div class="learn-title">The Rule of 72</div>
+    <div class="learn-body">
+      Divide 72 by your annual interest rate to find roughly how many years it takes your money to double.
+      <div class="example-box">
+        At 6%: 72 ÷ 6 = <strong>12 years</strong> to double<br>
+        At 8%: 72 ÷ 8 = <strong>9 years</strong> to double<br>
+        At 10%: 72 ÷ 10 = <strong>7.2 years</strong> to double<br><br>
+        This means money invested at 10% doubles roughly every 7 years — and doubles again 7 years after that.
+      </div>
+    </div>
+  </div>
+
+  <div class="learn-card">
+    <div class="learn-title">Where does the 7% come from?</div>
+    <div class="learn-body">
+      The S&amp;P 500 — an index of the 500 largest US companies — has returned an average of roughly <strong>10% per year</strong> since 1926. After subtracting the long-run US inflation rate of about 3%, the "real" return is approximately <strong>7%</strong>. This is why financial planners often use 7% as a conservative baseline for long-term projections. Past returns don't guarantee future results, but nearly a century of data makes it a reasonable estimate.
+    </div>
+  </div>
+
+  <div class="learn-card green">
+    <div class="learn-title">What is an index fund?</div>
+    <div class="learn-body">
+      An index fund simply tracks a market index — like the S&amp;P 500 — rather than having a manager pick individual stocks. Because no one is actively trading, costs stay extremely low. The expense ratio (annual fee) on funds like VTI or VOO is just <strong>0.03%</strong> — that's $3 per year on every $10,000 invested.
+      <div class="example-box">
+        A fund charging 1% vs 0.03% on a $300,000 portfolio costs you roughly <strong>$2,910 more per year</strong> — money that would otherwise be compounding for you.
+      </div>
+    </div>
+  </div>
+
+  <div class="learn-card gold">
+    <div class="learn-title">The power of starting early</div>
+    <div class="learn-body">
+      Time is the most powerful variable in compound interest — more powerful than rate or how much you save per week.
+      <div class="example-box">
+        Saving $50/week at 7%:<br><br>
+        Start at <strong>age 25</strong> → $570,000 at age 70<br>
+        Start at <strong>age 35</strong> → $272,000 at age 70<br>
+        Start at <strong>age 45</strong> → $117,000 at age 70<br><br>
+        Starting 10 years earlier more than doubles the outcome. Starting 20 years earlier multiplies it nearly 5 times.
+      </div>
+    </div>
+  </div>
+
+  <div class="learn-card gold">
+    <div class="learn-title">Total Expense Ratio (TER) — what to look for</div>
+    <div class="learn-body">
+      The Total Expense Ratio (TER) is the annual fee a fund charges, expressed as a percentage of your investment. It is deducted automatically — you never write a check, but it quietly reduces your returns every year.
+      <div class="example-box">
+        <strong>What to look for:</strong><br>
+        Under 0.10% — excellent (index ETFs like VTI, VOO)<br>
+        0.10% – 0.50% — acceptable for specialty funds<br>
+        Over 0.50% — high; look for a cheaper alternative<br>
+        Over 1.00% — very high; hard to justify long term<br><br>
+        <strong>Why it matters over time:</strong><br>
+        $100,000 invested for 30 years at 7%:<br>
+        At 0.03% TER → ~$760,000<br>
+        At 1.00% TER → ~$574,000<br>
+        That difference costs you roughly <strong>$186,000</strong>.
+      </div>
+      <br>
+      <strong>Other things to check when picking an ETF or fund:</strong><br><br>
+      • <strong>Expense ratio</strong> — as low as possible<br>
+      • <strong>Index it tracks</strong> — broad market (S&amp;P 500, total market) is simpler and historically hard to beat<br>
+      • <strong>Fund size</strong> — larger funds (over $1 billion) are more stable and liquid<br>
+      • <strong>Issuer reputation</strong> — Vanguard, Fidelity, and Schwab are well established<br>
+      • <strong>Actively managed vs. passive</strong> — passive index funds consistently outperform most active managers over long periods, at a fraction of the cost
+    </div>
+  </div>
+
+    <div class="learn-card">
+    <div class="learn-title">How this calculator works</div>
+    <div class="learn-body">
+      Your weekly savings amount is converted to a monthly deposit. Each month the calculator applies the monthly interest rate (annual rate ÷ 12) to your current balance and adds your deposit. This is the standard <strong>Future Value of Annuity</strong> formula used by financial calculators. The inflation adjustment divides the final balance by (1 + inflation rate) raised to the power of the number of years — showing what that future money is worth in today's dollars.
+    </div>
+  </div>
 
 </div>
 
 <script>
-function switchTab(id) {
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  event.target.classList.add('active');
-}
-
-function toggleInfo(id) {
-  document.getElementById(id).classList.toggle('open');
-}
-
-const fmt = n => '$' + Math.round(n).toLocaleString();
-
-function calc(weeklyAmt, annualRate, startAge) {
-  const monthlyRate = annualRate / 100 / 12;
-  const monthlyDeposit = weeklyAmt * 52 / 12;
-  const endAge = 65;
-  const snapAges = [];
-  for (let a = startAge + 5; a <= endAge; a += 5) snapAges.push(a);
-  if (!snapAges.length || snapAges[snapAges.length - 1] !== endAge) snapAges.push(endAge);
-  const results = [];
-  let balance = 0, totalContrib = 0, snapIdx = 0;
-  const totalMonths = (endAge - startAge) * 12;
-  for (let m = 1; m <= totalMonths; m++) {
-    balance = balance * (1 + monthlyRate) + monthlyDeposit;
-    totalContrib += monthlyDeposit;
-    const currentAge = startAge + m / 12;
-    if (snapIdx < snapAges.length && currentAge >= snapAges[snapIdx] - 0.001) {
-      results.push({ age: snapAges[snapIdx], total: balance, contrib: totalContrib });
-      snapIdx++;
+  // Dark mode
+  let darkForced = null;
+  function toggleDark() {
+    const btn = document.querySelector('.dark-toggle');
+    if (darkForced === null) {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      darkForced = !isDark;
+    } else {
+      darkForced = !darkForced;
+    }
+    applyDark();
+  }
+  function applyDark() {
+    const btn = document.querySelector('.dark-toggle');
+    if (darkForced === true) {
+      document.documentElement.style.setProperty('color-scheme', 'dark');
+      document.querySelector('html').setAttribute('data-forced-dark', 'true');
+      btn.textContent = '☀️ Light';
+      applyManualDark(true);
+    } else if (darkForced === false) {
+      document.documentElement.style.setProperty('color-scheme', 'light');
+      btn.textContent = '🌙 Dark';
+      applyManualDark(false);
     }
   }
-  return results;
-}
-
-function update() {
-  const weekly = +document.getElementById('savings-slider').value;
-  const rate = +document.getElementById('rate-slider').value;
-  const inflation = +document.getElementById('inflation-slider').value;
-  const startAge = +document.getElementById('age-slider').value;
-
-  document.getElementById('savings-out').textContent = '$' + weekly;
-  document.getElementById('rate-out').textContent = rate + '%';
-  document.getElementById('inflation-out').textContent = inflation + '%';
-  document.getElementById('age-out').textContent = startAge;
-
-  const years = 65 - startAge;
-  document.getElementById('years-val').textContent = years + ' yrs of saving';
-
-  if (years <= 0) {
-    ['total-val','real-val','interest-val','contrib-val'].forEach(id => document.getElementById(id).textContent = '—');
-    document.getElementById('bars').innerHTML = '<p style="font-size:13px;color:#666">Start before age 65.</p>';
-    return;
+  function applyManualDark(dark) {
+    const root = document.documentElement;
+    if (dark) {
+      root.style.setProperty('--bg', '#1a1a1a');
+      root.style.setProperty('--bg2', '#252525');
+      root.style.setProperty('--bg3', '#2e2e2e');
+      root.style.setProperty('--text', '#f0f0f0');
+      root.style.setProperty('--text2', '#aaa');
+      root.style.setProperty('--text3', '#777');
+      root.style.setProperty('--border', '#444');
+      root.style.setProperty('--blue', '#5ba3f5');
+      root.style.setProperty('--green', '#3dbf8f');
+      root.style.setProperty('--warn-bg', '#3a2e00');
+      root.style.setProperty('--warn-border', '#a07c00');
+      root.style.setProperty('--warn-text', '#f0d080');
+      root.style.setProperty('--step-bg', '#2e2e2e');
+      root.style.setProperty('--card-bg', '#252525');
+    } else {
+      root.style.setProperty('--bg', '#f5f5f0');
+      root.style.setProperty('--bg2', '#eeeee8');
+      root.style.setProperty('--bg3', '#fff');
+      root.style.setProperty('--text', '#1a1a1a');
+      root.style.setProperty('--text2', '#555');
+      root.style.setProperty('--text3', '#888');
+      root.style.setProperty('--border', '#ddd');
+      root.style.setProperty('--blue', '#378ADD');
+      root.style.setProperty('--green', '#1D9E75');
+      root.style.setProperty('--step-bg', '#fff');
+      root.style.setProperty('--card-bg', '#eeeee8');
+    }
   }
 
-  const data = calc(weekly, rate, startAge);
-  const last = data[data.length - 1];
-  const interest = last.total - last.contrib;
-  const inflationFactor = Math.pow(1 + inflation / 100, years);
-  const realValue = last.total / inflationFactor;
-  const intPct = Math.round((interest / last.total) * 100);
+  // Tabs
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    btn.classList.add('active');
+  }
 
-  document.getElementById('total-val').textContent = fmt(last.total);
-  document.getElementById('real-val').textContent = fmt(realValue);
-  document.getElementById('interest-val').textContent = fmt(interest);
-  document.getElementById('interest-pct').textContent = intPct + '% of total';
-  document.getElementById('contrib-val').textContent = fmt(last.contrib);
+  function toggleInfo(id) {
+    document.getElementById(id).classList.toggle('open');
+  }
 
-  const maxTotal = last.total;
-  const barsEl = document.getElementById('bars');
-  barsEl.innerHTML = '';
-  data.forEach(d => {
-    const gi = d.total - d.contrib;
-    const cp = (d.contrib / maxTotal) * 100;
-    const ip = (gi / maxTotal) * 100;
-    const row = document.createElement('div');
-    row.className = 'ci-bar-row';
-    row.innerHTML = `<div class="ci-bar-label">${d.age}</div><div class="ci-bar-track"><div class="ci-bar-contrib" style="width:${cp.toFixed(1)}%"></div><div class="ci-bar-interest" style="width:${ip.toFixed(1)}%"></div></div><div class="ci-bar-total">${fmt(d.total)}</div>`;
-    barsEl.appendChild(row);
-  });
-}
+  // Slider <-> input sync
+  function syncInput(sliderId, inputId) {
+    const slider = document.getElementById(sliderId);
+    const input = document.getElementById(inputId);
+    const val = parseFloat(slider.value);
+    if (inputId === 'savings-input') input.value = '$' + val;
+    else if (inputId === 'age-input') input.value = val;
+    else input.value = val + '%';
+  }
 
-['savings-slider','rate-slider','inflation-slider','age-slider'].forEach(id => {
-  document.getElementById(id).addEventListener('input', update);
-});
-update();
+  function syncSlider(inputId, sliderId, min, max) {
+    const input = document.getElementById(inputId);
+    const slider = document.getElementById(sliderId);
+    let raw = input.value.replace(/[$%]/g, '').trim();
+    let val = parseFloat(raw);
+    if (isNaN(val)) val = parseFloat(slider.value);
+    val = Math.min(max, Math.max(min, val));
+    slider.value = val;
+    // reformat
+    if (inputId === 'savings-input') input.value = '$' + val;
+    else if (inputId === 'age-input') input.value = val;
+    else input.value = val + '%';
+  }
+
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  const fmtDiff = n => '+$' + Math.round(n).toLocaleString();
+
+  function calc(weeklyAmt, annualRate, startAge) {
+    const monthlyRate = annualRate / 100 / 12;
+    const monthlyDeposit = weeklyAmt * 52 / 12;
+    const endAge = 70;
+    const snapAges = [];
+    for (let a = startAge + 5; a <= endAge; a += 5) snapAges.push(a);
+    if (!snapAges.length || snapAges[snapAges.length - 1] !== endAge) snapAges.push(endAge);
+    const results = [];
+    let balance = 0, totalContrib = 0, snapIdx = 0;
+    const totalMonths = (endAge - startAge) * 12;
+    for (let m = 1; m <= totalMonths; m++) {
+      balance = balance * (1 + monthlyRate) + monthlyDeposit;
+      totalContrib += monthlyDeposit;
+      const currentAge = startAge + m / 12;
+      if (snapIdx < snapAges.length && currentAge >= snapAges[snapIdx] - 0.001) {
+        results.push({ age: snapAges[snapIdx], total: balance, contrib: totalContrib });
+        snapIdx++;
+      }
+    }
+    return results;
+  }
+
+  function update() {
+    const weekly = parseFloat(document.getElementById('savings-slider').value);
+    const rate = parseFloat(document.getElementById('rate-slider').value);
+    const inflation = parseFloat(document.getElementById('inflation-slider').value);
+    const startAge = parseInt(document.getElementById('age-slider').value);
+
+    const years = 70 - startAge;
+    document.getElementById('years-val').textContent = years + ' yrs of saving';
+
+    if (years <= 0) {
+      ['total-val','real-val','interest-val','contrib-val'].forEach(id => document.getElementById(id).textContent = '—');
+      document.getElementById('bars').innerHTML = '';
+      document.getElementById('compare-rows').innerHTML = '';
+      return;
+    }
+
+    const data = calc(weekly, rate, startAge);
+    const last = data[data.length - 1];
+    const interest = last.total - last.contrib;
+    const inflationFactor = Math.pow(1 + inflation / 100, years);
+    const realValue = last.total / inflationFactor;
+    const intPct = Math.round((interest / last.total) * 100);
+
+    document.getElementById('total-val').textContent = fmt(last.total);
+    document.getElementById('real-val').textContent = fmt(realValue);
+    document.getElementById('interest-val').textContent = fmt(interest);
+    document.getElementById('interest-pct').textContent = intPct + '% of total';
+    document.getElementById('contrib-val').textContent = fmt(last.contrib);
+
+
+  }
+
+  update();
 </script>
 </body>
 </html>
