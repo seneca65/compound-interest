@@ -181,7 +181,7 @@
 
   <div class="ci-cards">
     <div class="ci-card">
-      <div class="ci-card-label">Total at age 70</div>
+      <div class="ci-card-label">Total at age 65</div>
       <div class="ci-card-value green" id="total-val">—</div>
       <div class="ci-card-sub">nominal (future) dollars</div>
     </div>
@@ -202,7 +202,7 @@
     </div>
   </div>
 
-  <div class="fv-note">Compounding is monthly. "Total at age 70" is the future nominal dollar amount. "Real value" discounts by your chosen inflation rate to show purchasing power in today's dollars.</div>
+  <div class="fv-note">Compounding is monthly. "Total at age 65" is the future nominal dollar amount. "Real value" discounts by your chosen inflation rate to show purchasing power in today's dollars.</div>
 
 </div>
 
@@ -255,9 +255,9 @@
       Time is the most powerful variable in compound interest — more powerful than rate or how much you save per week.
       <div class="example-box">
         Saving $50/week at 7%:<br><br>
-        Start at <strong>age 25</strong> → $570,000 at age 70<br>
-        Start at <strong>age 35</strong> → $272,000 at age 70<br>
-        Start at <strong>age 45</strong> → $117,000 at age 70<br><br>
+        Start at <strong>age 25</strong> → $570,000 at age 65<br>
+        Start at <strong>age 35</strong> → $272,000 at age 65<br>
+        Start at <strong>age 45</strong> → $117,000 at age 65<br><br>
         Starting 10 years earlier more than doubles the outcome. Starting 20 years earlier multiplies it nearly 5 times.
       </div>
     </div>
@@ -405,7 +405,7 @@
   function calc(weeklyAmt, annualRate, startAge) {
     const monthlyRate = annualRate / 100 / 12;
     const monthlyDeposit = weeklyAmt * 52 / 12;
-    const endAge = 70;
+    const endAge = 65;
     const snapAges = [];
     for (let a = startAge + 5; a <= endAge; a += 5) snapAges.push(a);
     if (!snapAges.length || snapAges[snapAges.length - 1] !== endAge) snapAges.push(endAge);
@@ -430,7 +430,7 @@
     const inflation = parseFloat(document.getElementById('inflation-slider').value);
     const startAge = parseInt(document.getElementById('age-slider').value);
 
-    const years = 70 - startAge;
+    const years = 65 - startAge;
     document.getElementById('years-val').textContent = years + ' yrs of saving';
 
     if (years <= 0) {
